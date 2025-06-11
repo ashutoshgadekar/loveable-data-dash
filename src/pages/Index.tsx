@@ -27,7 +27,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200" style={{ backgroundColor: '#e0e5ec' }}>
+    <div className="min-h-screen bg-gray-900 text-gray-100">
       {!isConnected ? (
         <CredentialForm onConnectionSuccess={handleConnectionSuccess} />
       ) : (
