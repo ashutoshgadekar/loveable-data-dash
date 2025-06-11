@@ -1,6 +1,6 @@
-
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { 
   Pagination, 
@@ -11,6 +11,7 @@ import {
   PaginationNext, 
   PaginationPrevious 
 } from '@/components/ui/pagination';
+import { Search } from 'lucide-react';
 
 interface DataTableProps {
   data: any[];
@@ -18,6 +19,7 @@ interface DataTableProps {
 
 const DataTable: React.FC<DataTableProps> = ({ data }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
   const itemsPerPage = 10;
 
   if (!data || data.length === 0) {
@@ -27,11 +29,29 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
   // Get column headers from the first row
   const columns = Object.keys(data[0]);
 
+  // Filter data based on search term
+  const filteredData = useMemo(() => {
+    if (!searchTerm) return data;
+    
+    return data.filter(row =>
+      columns.some(column => {
+        const value = row[column];
+        if (value === null || value === undefined) return false;
+        return value.toString().toLowerCase().includes(searchTerm.toLowerCase());
+      })
+    );
+  }, [data, searchTerm, columns]);
+
   // Calculate pagination
-  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentData = data.slice(startIndex, endIndex);
+  const currentData = filteredData.slice(startIndex, endIndex);
+
+  // Reset to first page when search changes
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   // Generate page numbers for pagination
   const getPageNumbers = () => {
@@ -78,8 +98,20 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold text-gray-800">Data Results</h3>
         <p className="text-sm text-gray-600">
-          Showing {startIndex + 1} to {Math.min(endIndex, data.length)} of {data.length} results
+          Showing {startIndex + 1} to {Math.min(endIndex, filteredData.length)} of {filteredData.length} results
+          {searchTerm && ` (filtered from ${data.length} total)`}
         </p>
+      </div>
+
+      {/* Search Filter */}
+      <div className="mb-4 relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+        <Input
+          placeholder="Search in table data..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10 bg-gray-100 border-0 shadow-neumorphic-inset focus:shadow-neumorphic-inset-focus"
+        />
       </div>
       
       <div className="bg-gray-50 rounded-lg shadow-neumorphic-inset overflow-hidden">

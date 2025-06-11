@@ -7,7 +7,7 @@ interface VisualizationPanelProps {
   chartType: 'bar' | 'line' | 'pie';
 }
 
-const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7c7c', '#8dd1e1'];
+const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4', '#84CC16', '#F97316'];
 
 const VisualizationPanel: React.FC<VisualizationPanelProps> = ({ data, chartType }) => {
   // Transform data for visualization with better labels
@@ -65,7 +65,7 @@ const VisualizationPanel: React.FC<VisualizationPanelProps> = ({ data, chartType
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                 }} 
               />
-              <Bar dataKey="value" fill="#8884d8" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="value" fill="#3B82F6" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         );
@@ -92,7 +92,7 @@ const VisualizationPanel: React.FC<VisualizationPanelProps> = ({ data, chartType
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                 }} 
               />
-              <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={3} dot={{ fill: '#8884d8', strokeWidth: 2, r: 6 }} />
+              <Line type="monotone" dataKey="value" stroke="#10B981" strokeWidth={3} dot={{ fill: '#10B981', strokeWidth: 2, r: 6 }} />
             </LineChart>
           </ResponsiveContainer>
         );
@@ -108,7 +108,7 @@ const VisualizationPanel: React.FC<VisualizationPanelProps> = ({ data, chartType
                 labelLine={false}
                 label={({ name, percent, value }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
                 outerRadius={120}
-                fill="#8884d8"
+                fill="#3B82F6"
                 dataKey="value"
               >
                 {transformedData.map((entry, index) => (
