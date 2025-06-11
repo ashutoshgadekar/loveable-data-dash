@@ -10,6 +10,7 @@ import { DatabaseConfig } from '../pages/Index';
 import MetricsGrid from './MetricsGrid';
 import VisualizationPanel from './VisualizationPanel';
 import InsightsPanel from './InsightsPanel';
+import DataTable from './DataTable';
 
 interface DashboardProps {
   config: DatabaseConfig;
@@ -137,8 +138,13 @@ const Dashboard: React.FC<DashboardProps> = ({ config, onDisconnect }) => {
             {/* Metrics */}
             <MetricsGrid metrics={response.metrics} />
 
-            {/* Visualization Controls */}
+            {/* Data Table */}
             {response.metadata.raw_data.length > 0 && (
+              <DataTable data={response.metadata.raw_data} />
+            )}
+
+            {/* Visualization Controls - Only show if graph_generated is true */}
+            {response.graph_generated && response.metadata.raw_data.length > 0 && (
               <Card className="p-6 bg-gray-100 border-0 shadow-neumorphic">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-semibold text-gray-800">Visualizations</h3>
