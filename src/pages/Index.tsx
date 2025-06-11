@@ -1,12 +1,40 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState } from 'react';
+import CredentialForm from '../components/CredentialForm';
+import Dashboard from '../components/Dashboard';
+import FloatingAssistant from '../components/FloatingAssistant';
+
+export interface DatabaseConfig {
+  driver: string;
+  server: string;
+  port: number;
+  database: string;
+  username: string;
+  password: string;
+}
 
 const Index = () => {
+  const [isConnected, setIsConnected] = useState(false);
+  const [config, setConfig] = useState<DatabaseConfig | null>(null);
+
+  const handleConnectionSuccess = (dbConfig: DatabaseConfig) => {
+    setConfig(dbConfig);
+    setIsConnected(true);
+  };
+
+  const handleDisconnect = () => {
+    setIsConnected(false);
+    setConfig(null);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200" style={{ backgroundColor: '#e0e5ec' }}>
+      {!isConnected ? (
+        <CredentialForm onConnectionSuccess={handleConnectionSuccess} />
+      ) : (
+        <Dashboard config={config!} onDisconnect={handleDisconnect} />
+      )}
+      <FloatingAssistant />
     </div>
   );
 };

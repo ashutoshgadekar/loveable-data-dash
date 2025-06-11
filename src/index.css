@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -99,5 +100,38 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Neumorphism Utilities */
+@layer utilities {
+  .shadow-neumorphic {
+    box-shadow: 
+      8px 8px 16px #c8cdd6,
+      -8px -8px 16px #f8fdff;
+  }
+  
+  .shadow-neumorphic-hover {
+    box-shadow: 
+      12px 12px 24px #c8cdd6,
+      -12px -12px 24px #f8fdff;
+  }
+  
+  .shadow-neumorphic-active {
+    box-shadow: 
+      inset 4px 4px 8px #c8cdd6,
+      inset -4px -4px 8px #f8fdff;
+  }
+  
+  .shadow-neumorphic-inset {
+    box-shadow: 
+      inset 6px 6px 12px #c8cdd6,
+      inset -6px -6px 12px #f8fdff;
+  }
+  
+  .shadow-neumorphic-inset-focus {
+    box-shadow: 
+      inset 8px 8px 16px #c8cdd6,
+      inset -8px -8px 16px #f8fdff;
   }
 }
