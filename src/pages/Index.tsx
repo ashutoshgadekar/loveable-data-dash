@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import CredentialForm from '../components/CredentialForm';
 import Dashboard from '../components/Dashboard';
-import FloatingAssistant from '../components/FloatingAssistant';
 
 export interface DatabaseConfig {
   driver: string;
@@ -34,7 +33,6 @@ const Index = () => {
       ) : (
         <Dashboard config={config!} onDisconnect={handleDisconnect} />
       )}
-      <FloatingAssistant />
     </div>
   );
 };
