@@ -113,7 +113,7 @@ const Dashboard: React.FC<DashboardProps> = ({ config, onDisconnect }) => {
           </div>
           <div className="space-y-6">
             <Textarea
-              placeholder="Ask your question in natural language... (e.g., 'How many students are in 8th class?')"
+              placeholder="Ask your question in natural language... "
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="min-h-[120px] bg-white border-slate-200 focus:border-primary focus:ring-primary/20 resize-none font-medium text-slate-700 placeholder:text-slate-400"
