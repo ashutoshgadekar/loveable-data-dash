@@ -1,225 +1,127 @@
-
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
-import { Send, Loader, LogOut, BarChart3, LineChart, PieChart, Database, Sparkles } from 'lucide-react';
-import { toast } from 'sonner';
 import { DatabaseConfig } from '../pages/Index';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Database, LogOut, BarChart3, Table, TrendingUp } from 'lucide-react';
+import DataTable from './DataTable';
 import MetricsGrid from './MetricsGrid';
 import VisualizationPanel from './VisualizationPanel';
 import InsightsPanel from './InsightsPanel';
-import DataTable from './DataTable';
+import BrandedHeader from './BrandedHeader';
 
 interface DashboardProps {
   config: DatabaseConfig;
   onDisconnect: () => void;
 }
 
-interface QueryResponse {
-  metadata: {
-    raw_data: any[];
-    data_points: number;
-    generated_sql: string;
-    chart_requested: boolean;
-    data_suitable_for_viz: boolean;
-    relationships_found: number;
-    tables_with_relationships: string[];
-  };
-  visualizations: any[];
-  metrics: Array<{
-    title: string;
-    value: number;
-    type: string;
-  }>;
-  insights: string[];
-  graph_generated: boolean;
-  relationships: any;
+interface Metric {
+  title: string;
+  value: number;
+  type: string;
 }
 
+const mockMetrics: Metric[] = [
+  { title: 'Total Queries', value: 12345, type: 'count' },
+  { title: 'Average Response Time', value: 250, type: 'average' },
+  { title: 'Maximum Rows', value: 5000, type: 'maximum' },
+  { title: 'Minimum Connections', value: 10, type: 'minimum' },
+];
+
+const mockTableData = [
+  { id: 1, name: 'Record 1', value: 100 },
+  { id: 2, name: 'Record 2', value: 200 },
+  { id: 3, name: 'Record 3', value: 300 },
+];
+
+const mockChartData = [
+  { name: 'Group A', value: 400 },
+  { name: 'Group B', value: 300 },
+  { name: 'Group C', value: 200 },
+  { name: 'Group D', value: 100 },
+];
+
 const Dashboard: React.FC<DashboardProps> = ({ config, onDisconnect }) => {
-  const [query, setQuery] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [response, setResponse] = useState<QueryResponse | null>(null);
-  const [selectedChart, setSelectedChart] = useState<'bar' | 'line' | 'pie'>('bar');
-
-  const executeQuery = async () => {
-    if (!query.trim()) {
-      toast.error('Please enter a query');
-      return;
-    }
-
-    setIsLoading(true);
-    
-    try {
-      const apiResponse = await fetch('http://127.0.0.1:8000/api/query', {
-        method: 'POST',
-        headers: {
-          'accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          config: config,
-          query: query
-        }),
-      });
-
-      if (apiResponse.ok) {
-        const data = await apiResponse.json();
-        setResponse(data);
-        toast.success('Query executed successfully!');
-      } else {
-        toast.error('Query failed. Please check your input.');
-      }
-    } catch (error) {
-      toast.error('Failed to execute query. Please try again.');
-      console.error('Query error:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [activeTab, setActiveTab] = useState('overview');
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <div className="absolute inset-0 gradient-primary rounded-full blur-lg opacity-30"></div>
-              <div className="relative bg-white rounded-full p-3 professional-shadow">
-                <Database className="w-8 h-8 text-primary" />
-              </div>
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold text-slate-800 tracking-tight">Analytics Dashboard</h1>
-              <div className="flex items-center mt-1">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                <p className="text-slate-600 font-medium">Connected to {config.database}</p>
-              </div>
-            </div>
-          </div>
-          <Button
-            onClick={onDisconnect}
-            variant="outline"
-            className="bg-white hover:bg-slate-50 text-slate-700 border-slate-200 font-semibold professional-shadow hover:professional-shadow-lg transition-all duration-200"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Disconnect
-          </Button>
-        </div>
-
-        {/* Query Interface */}
-        <Card className="p-8 mb-8 bg-white/80 backdrop-blur-sm border border-white/20 professional-shadow-lg">
-          <div className="flex items-center mb-6">
-            <Sparkles className="w-6 h-6 text-primary mr-3" />
-            <h2 className="text-2xl font-bold text-slate-800">AI Query Assistant</h2>
-          </div>
-          <div className="space-y-6">
-            <Textarea
-              placeholder="Ask your question in natural language... (e.g., 'How many students are in 8th class?')"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="min-h-[120px] bg-white border-slate-200 focus:border-primary focus:ring-primary/20 resize-none font-medium text-slate-700 placeholder:text-slate-400"
-            />
-            <Button
-              onClick={executeQuery}
-              disabled={isLoading}
-              className="gradient-primary text-white font-semibold py-3 px-8 rounded-lg hover:opacity-90 transition-all duration-200 professional-shadow"
-            >
-              {isLoading ? (
-                <>
-                  <Loader className="w-5 h-5 mr-2 animate-spin" />
-                  Processing Query...
-                </>
-              ) : (
-                <>
-                  <Send className="w-5 h-5 mr-2" />
-                  Execute Query
-                </>
-              )}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <BrandedHeader />
+      
+      <div className="p-6 space-y-6">
+        {/* Connection Status Card */}
+        <Card className="bg-gradient-to-r from-emerald-900/50 to-emerald-800/50 border-emerald-700/30 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center space-x-2">
+              <Database className="w-5 h-5 text-emerald-400" />
+              <span>Database Connection</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-slate-300">
+            <p>Connected to: <span className="font-semibold">{config.database}</span></p>
+            <p>Server: <span className="font-semibold">{config.server}:{config.port}</span></p>
+            <Button variant="secondary" size="sm" onClick={onDisconnect} className="mt-4">
+              <LogOut className="w-4 h-4 mr-2" />
+              Disconnect
             </Button>
-          </div>
+          </CardContent>
         </Card>
 
-        {/* Results */}
-        {response && (
-          <div className="space-y-8 animate-fade-in">
-            {/* Generated SQL */}
-            <Card className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 professional-shadow-lg">
-              <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center">
-                <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                Generated SQL Query
-              </h3>
-              <div className="bg-slate-900 p-6 rounded-xl font-mono text-sm text-green-400 border border-slate-700">
-                {response.metadata.generated_sql}
-              </div>
+        {/* Main Dashboard */}
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="overview" onClick={() => setActiveTab('overview')}>
+              <BarChart3 className="w-4 h-4 mr-2" />
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="data" onClick={() => setActiveTab('data')}>
+              <Table className="w-4 h-4 mr-2" />
+              Data Table
+            </TabsTrigger>
+            <TabsTrigger value="insights" onClick={() => setActiveTab('insights')}>
+              <TrendingUp className="w-4 h-4 mr-2" />
+              Insights
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="overview" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Key Metrics</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <MetricsGrid metrics={mockMetrics} />
+              </CardContent>
             </Card>
-
-            {/* Metrics */}
-            <MetricsGrid metrics={response.metrics} />
-
-            {/* Data Table */}
-            {response.metadata.raw_data.length > 0 && (
-              <DataTable data={response.metadata.raw_data} />
-            )}
-
-            {/* Visualization Controls */}
-            {response.graph_generated && response.metadata.raw_data.length > 0 && (
-              <Card className="p-8 bg-white/80 backdrop-blur-sm border border-white/20 professional-shadow-lg">
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-bold text-slate-800 flex items-center">
-                    <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                    Data Visualizations
-                  </h3>
-                  <div className="flex space-x-2">
-                    <Button
-                      onClick={() => setSelectedChart('bar')}
-                      variant={selectedChart === 'bar' ? 'default' : 'outline'}
-                      size="sm"
-                      className={selectedChart === 'bar' 
-                        ? 'gradient-primary text-white' 
-                        : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
-                      }
-                    >
-                      <BarChart3 className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      onClick={() => setSelectedChart('line')}
-                      variant={selectedChart === 'line' ? 'default' : 'outline'}
-                      size="sm"
-                      className={selectedChart === 'line' 
-                        ? 'gradient-primary text-white' 
-                        : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
-                      }
-                    >
-                      <LineChart className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      onClick={() => setSelectedChart('pie')}
-                      variant={selectedChart === 'pie' ? 'default' : 'outline'}
-                      size="sm"
-                      className={selectedChart === 'pie' 
-                        ? 'gradient-primary text-white' 
-                        : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
-                      }
-                    >
-                      <PieChart className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-                <VisualizationPanel 
-                  data={response.metadata.raw_data} 
-                  chartType={selectedChart}
-                />
-              </Card>
-            )}
-
-            {/* Insights */}
-            <InsightsPanel insights={response.insights} />
-          </div>
-        )}
+            <Card>
+              <CardHeader>
+                <CardTitle>Data Visualization</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <VisualizationPanel data={mockChartData} chartType="bar" />
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="data" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Data Table</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <DataTable data={mockTableData} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="insights" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Insights Panel</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <InsightsPanel />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
