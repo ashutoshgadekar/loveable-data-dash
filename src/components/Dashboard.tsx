@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +10,7 @@ import MetricsGrid from './MetricsGrid';
 import VisualizationPanel from './VisualizationPanel';
 import InsightsPanel from './InsightsPanel';
 import DataTable from './DataTable';
+import BrandedHeader from './BrandedHeader';
 
 interface DashboardProps {
   config: DatabaseConfig;
@@ -83,22 +83,17 @@ const Dashboard: React.FC<DashboardProps> = ({ config, onDisconnect }) => {
   return (
     <div className="min-h-screen p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
+        {/* Branded Header */}
+        <BrandedHeader 
+          title="Analytics Dashboard"
+          subtitle="Connect to your database to unlock powerful insights"
+        />
+
+        {/* Connection Status and Disconnect */}
         <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <div className="absolute inset-0 gradient-primary rounded-full blur-lg opacity-30"></div>
-              <div className="relative bg-white rounded-full p-3 professional-shadow">
-                <Database className="w-8 h-8 text-primary" />
-              </div>
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold text-slate-800 tracking-tight">Analytics Dashboard</h1>
-              <div className="flex items-center mt-1">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                <p className="text-slate-600 font-medium">Connected to {config.database}</p>
-              </div>
-            </div>
+          <div className="flex items-center">
+            <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+            <p className="text-slate-600 font-medium">Connected to {config.database}</p>
           </div>
           <Button
             onClick={onDisconnect}

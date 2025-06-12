@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Database, Loader, CheckCircle, XCircle, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { DatabaseConfig } from '../pages/Index';
+import BrandedHeader from './BrandedHeader';
 
 interface CredentialFormProps {
   onConnectionSuccess: (config: DatabaseConfig) => void;
@@ -68,25 +68,11 @@ const CredentialForm: React.FC<CredentialFormProps> = ({ onConnectionSuccess }) 
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-md">
-        {/* Header Section */}
-        <div className="text-center mb-8 animate-fade-in">
-          <div className="relative inline-block mb-6">
-            <div className="absolute inset-0 gradient-primary rounded-full blur-xl opacity-30 animate-pulse"></div>
-            <div className="relative bg-white rounded-full p-6 professional-shadow-lg">
-              <Database className="w-12 h-12 text-primary mx-auto" />
-            </div>
-          </div>
-          <h1 className="text-4xl font-bold text-slate-800 mb-3 tracking-tight">
-            Database Analytics
-          </h1>
-          <p className="text-slate-600 font-medium">
-            Connect to your database to unlock powerful insights
-          </p>
-          <div className="flex items-center justify-center mt-3 text-primary">
-            <Sparkles className="w-4 h-4 mr-2" />
-            <span className="text-sm font-semibold">Professional Analytics Platform</span>
-          </div>
-        </div>
+        {/* Branded Header */}
+        <BrandedHeader 
+          title="Database Analytics"
+          subtitle="Connect to your database to unlock powerful insights"
+        />
 
         {/* Connection Form */}
         <Card className="p-8 bg-white/80 backdrop-blur-sm border border-white/20 professional-shadow-lg">
