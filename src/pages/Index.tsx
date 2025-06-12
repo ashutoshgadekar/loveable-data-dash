@@ -27,7 +27,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 font-afacad">
       {!isConnected ? (
         <CredentialForm onConnectionSuccess={handleConnectionSuccess} />
       ) : (

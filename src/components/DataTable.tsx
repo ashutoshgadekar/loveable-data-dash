@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,7 +12,7 @@ import {
   PaginationNext, 
   PaginationPrevious 
 } from '@/components/ui/pagination';
-import { Search } from 'lucide-react';
+import { Search, Database } from 'lucide-react';
 
 interface DataTableProps {
   data: any[];
@@ -29,7 +30,6 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
   // Get column headers from the first row
   const columns = Object.keys(data[0]);
 
-  // Filter data based on search term
   const filteredData = useMemo(() => {
     if (!searchTerm) return data;
     
@@ -42,13 +42,11 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
     );
   }, [data, searchTerm, columns]);
 
-  // Calculate pagination
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentData = filteredData.slice(startIndex, endIndex);
 
-  // Reset to first page when search changes
   React.useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
@@ -94,32 +92,38 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
   };
 
   return (
-    <Card className="p-6 bg-gray-100 border-0 shadow-neumorphic">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">Data Results</h3>
-        <p className="text-sm text-gray-600">
-          Showing {startIndex + 1} to {Math.min(endIndex, filteredData.length)} of {filteredData.length} results
-          {searchTerm && ` (filtered from ${data.length} total)`}
-        </p>
+    <Card className="p-8 bg-white/80 backdrop-blur-sm border border-white/20 professional-shadow-lg">
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center">
+          <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+          <h3 className="text-xl font-bold text-slate-800">Data Results</h3>
+        </div>
+        <div className="flex items-center text-sm text-slate-600 font-medium">
+          <Database className="w-4 h-4 mr-2" />
+          <span>
+            {startIndex + 1} - {Math.min(endIndex, filteredData.length)} of {filteredData.length} results
+            {searchTerm && ` (filtered from ${data.length} total)`}
+          </span>
+        </div>
       </div>
 
       {/* Search Filter */}
-      <div className="mb-4 relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+      <div className="mb-6 relative">
+        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
         <Input
-          placeholder="Search in table data..."
+          placeholder="Search across all data..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 bg-gray-100 border-0 shadow-neumorphic-inset focus:shadow-neumorphic-inset-focus"
+          className="pl-12 bg-white border-slate-200 focus:border-primary focus:ring-primary/20 font-medium text-slate-700 h-12"
         />
       </div>
       
-      <div className="bg-gray-50 rounded-lg shadow-neumorphic-inset overflow-hidden">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden professional-shadow">
         <Table>
           <TableHeader>
-            <TableRow className="bg-gray-200 hover:bg-gray-200">
+            <TableRow className="bg-gradient-to-r from-slate-50 to-slate-100 hover:from-slate-100 hover:to-slate-200">
               {columns.map((column) => (
-                <TableHead key={column} className="font-semibold text-gray-700 p-4">
+                <TableHead key={column} className="font-bold text-slate-700 p-4 text-sm tracking-wide">
                   {column.charAt(0).toUpperCase() + column.slice(1).replace(/_/g, ' ')}
                 </TableHead>
               ))}
@@ -127,9 +131,9 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
           </TableHeader>
           <TableBody>
             {currentData.map((row, index) => (
-              <TableRow key={index} className="hover:bg-gray-100 border-b border-gray-300">
+              <TableRow key={index} className="hover:bg-slate-50 border-b border-slate-100 transition-colors duration-150">
                 {columns.map((column) => (
-                  <TableCell key={column} className="p-4 text-gray-700">
+                  <TableCell key={column} className="p-4 text-slate-700 font-medium">
                     {row[column] !== null && row[column] !== undefined ? row[column].toString() : '-'}
                   </TableCell>
                 ))}
@@ -140,13 +144,13 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
       </div>
 
       {totalPages > 1 && (
-        <div className="mt-6">
+        <div className="mt-8">
           <Pagination>
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious 
                   onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer bg-gray-100 hover:bg-gray-50 text-gray-800 border-0 shadow-neumorphic hover:shadow-neumorphic-hover'}
+                  className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer bg-white hover:bg-slate-50 text-slate-700 border-slate-200 font-semibold'}
                 />
               </PaginationItem>
 
@@ -158,7 +162,11 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
                     <PaginationLink
                       onClick={() => handlePageChange(page as number)}
                       isActive={currentPage === page}
-                      className="cursor-pointer bg-gray-100 hover:bg-gray-50 text-gray-800 border-0 shadow-neumorphic hover:shadow-neumorphic-hover"
+                      className={`cursor-pointer font-semibold ${
+                        currentPage === page 
+                          ? 'gradient-primary text-white' 
+                          : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
+                      }`}
                     >
                       {page}
                     </PaginationLink>
@@ -169,7 +177,7 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
               <PaginationItem>
                 <PaginationNext 
                   onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
-                  className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer bg-gray-100 hover:bg-gray-50 text-gray-800 border-0 shadow-neumorphic hover:shadow-neumorphic-hover'}
+                  className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer bg-white hover:bg-slate-50 text-slate-700 border-slate-200 font-semibold'}
                 />
               </PaginationItem>
             </PaginationContent>

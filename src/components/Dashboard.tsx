@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, Loader, LogOut, BarChart3, LineChart, PieChart } from 'lucide-react';
+import { Send, Loader, LogOut, BarChart3, LineChart, PieChart, Database, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { DatabaseConfig } from '../pages/Index';
 import MetricsGrid from './MetricsGrid';
@@ -81,18 +81,29 @@ const Dashboard: React.FC<DashboardProps> = ({ config, onDisconnect }) => {
   };
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Data Analytics Dashboard</h1>
-            <p className="text-gray-600">Connected to {config.database} database</p>
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <div className="absolute inset-0 gradient-primary rounded-full blur-lg opacity-30"></div>
+              <div className="relative bg-white rounded-full p-3 professional-shadow">
+                <Database className="w-8 h-8 text-primary" />
+              </div>
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold text-slate-800 tracking-tight">Analytics Dashboard</h1>
+              <div className="flex items-center mt-1">
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                <p className="text-slate-600 font-medium">Connected to {config.database}</p>
+              </div>
+            </div>
           </div>
           <Button
             onClick={onDisconnect}
             variant="outline"
-            className="bg-gray-100 hover:bg-gray-50 text-gray-800 border-0 shadow-neumorphic hover:shadow-neumorphic-hover"
+            className="bg-white hover:bg-slate-50 text-slate-700 border-slate-200 font-semibold professional-shadow hover:professional-shadow-lg transition-all duration-200"
           >
             <LogOut className="w-4 h-4 mr-2" />
             Disconnect
@@ -100,37 +111,48 @@ const Dashboard: React.FC<DashboardProps> = ({ config, onDisconnect }) => {
         </div>
 
         {/* Query Interface */}
-        <Card className="p-6 mb-8 bg-gray-100 border-0 shadow-neumorphic">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Ask Loveable</h2>
-          <div className="space-y-4">
+        <Card className="p-8 mb-8 bg-white/80 backdrop-blur-sm border border-white/20 professional-shadow-lg">
+          <div className="flex items-center mb-6">
+            <Sparkles className="w-6 h-6 text-primary mr-3" />
+            <h2 className="text-2xl font-bold text-slate-800">AI Query Assistant</h2>
+          </div>
+          <div className="space-y-6">
             <Textarea
               placeholder="Ask your question in natural language... (e.g., 'How many students are in 8th class?')"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="min-h-[100px] bg-gray-100 border-0 shadow-neumorphic-inset focus:shadow-neumorphic-inset-focus resize-none"
+              className="min-h-[120px] bg-white border-slate-200 focus:border-primary focus:ring-primary/20 resize-none font-medium text-slate-700 placeholder:text-slate-400"
             />
             <Button
               onClick={executeQuery}
               disabled={isLoading}
-              className="bg-gray-100 hover:bg-gray-50 text-gray-800 border-0 shadow-neumorphic hover:shadow-neumorphic-hover active:shadow-neumorphic-active transition-all duration-200"
+              className="gradient-primary text-white font-semibold py-3 px-8 rounded-lg hover:opacity-90 transition-all duration-200 professional-shadow"
             >
               {isLoading ? (
-                <Loader className="w-4 h-4 mr-2 animate-spin" />
+                <>
+                  <Loader className="w-5 h-5 mr-2 animate-spin" />
+                  Processing Query...
+                </>
               ) : (
-                <Send className="w-4 h-4 mr-2" />
+                <>
+                  <Send className="w-5 h-5 mr-2" />
+                  Execute Query
+                </>
               )}
-              {isLoading ? 'Processing...' : 'Ask Loveable'}
             </Button>
           </div>
         </Card>
 
         {/* Results */}
         {response && (
-          <div className="space-y-8">
+          <div className="space-y-8 animate-fade-in">
             {/* Generated SQL */}
-            <Card className="p-6 bg-gray-100 border-0 shadow-neumorphic">
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">Generated SQL Query</h3>
-              <div className="bg-gray-200 p-4 rounded-lg shadow-neumorphic-inset font-mono text-sm text-gray-700">
+            <Card className="p-6 bg-white/80 backdrop-blur-sm border border-white/20 professional-shadow-lg">
+              <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center">
+                <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+                Generated SQL Query
+              </h3>
+              <div className="bg-slate-900 p-6 rounded-xl font-mono text-sm text-green-400 border border-slate-700">
                 {response.metadata.generated_sql}
               </div>
             </Card>
@@ -143,17 +165,23 @@ const Dashboard: React.FC<DashboardProps> = ({ config, onDisconnect }) => {
               <DataTable data={response.metadata.raw_data} />
             )}
 
-            {/* Visualization Controls - Only show if graph_generated is true */}
+            {/* Visualization Controls */}
             {response.graph_generated && response.metadata.raw_data.length > 0 && (
-              <Card className="p-6 bg-gray-100 border-0 shadow-neumorphic">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold text-gray-800">Visualizations</h3>
+              <Card className="p-8 bg-white/80 backdrop-blur-sm border border-white/20 professional-shadow-lg">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-bold text-slate-800 flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+                    Data Visualizations
+                  </h3>
                   <div className="flex space-x-2">
                     <Button
                       onClick={() => setSelectedChart('bar')}
                       variant={selectedChart === 'bar' ? 'default' : 'outline'}
                       size="sm"
-                      className="bg-gray-100 hover:bg-gray-50 text-gray-800 border-0 shadow-neumorphic hover:shadow-neumorphic-hover"
+                      className={selectedChart === 'bar' 
+                        ? 'gradient-primary text-white' 
+                        : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
+                      }
                     >
                       <BarChart3 className="w-4 h-4" />
                     </Button>
@@ -161,7 +189,10 @@ const Dashboard: React.FC<DashboardProps> = ({ config, onDisconnect }) => {
                       onClick={() => setSelectedChart('line')}
                       variant={selectedChart === 'line' ? 'default' : 'outline'}
                       size="sm"
-                      className="bg-gray-100 hover:bg-gray-50 text-gray-800 border-0 shadow-neumorphic hover:shadow-neumorphic-hover"
+                      className={selectedChart === 'line' 
+                        ? 'gradient-primary text-white' 
+                        : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
+                      }
                     >
                       <LineChart className="w-4 h-4" />
                     </Button>
@@ -169,7 +200,10 @@ const Dashboard: React.FC<DashboardProps> = ({ config, onDisconnect }) => {
                       onClick={() => setSelectedChart('pie')}
                       variant={selectedChart === 'pie' ? 'default' : 'outline'}
                       size="sm"
-                      className="bg-gray-100 hover:bg-gray-50 text-gray-800 border-0 shadow-neumorphic hover:shadow-neumorphic-hover"
+                      className={selectedChart === 'pie' 
+                        ? 'gradient-primary text-white' 
+                        : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
+                      }
                     >
                       <PieChart className="w-4 h-4" />
                     </Button>

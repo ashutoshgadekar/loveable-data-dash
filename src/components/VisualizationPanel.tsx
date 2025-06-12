@@ -7,14 +7,13 @@ interface VisualizationPanelProps {
   chartType: 'bar' | 'line' | 'pie';
 }
 
-const COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9'];
+const COLORS = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#84cc16', '#f97316'];
 
 const VisualizationPanel: React.FC<VisualizationPanelProps> = ({ data, chartType }) => {
   // Transform data for visualization with better labels
   const transformedData = data.map((item, index) => {
     const keys = Object.keys(item);
     
-    // Find the most appropriate key for labels and values
     const labelKey = keys.find(key => 
       key.toLowerCase().includes('name') || 
       key.toLowerCase().includes('section') || 
@@ -47,26 +46,28 @@ const VisualizationPanel: React.FC<VisualizationPanelProps> = ({ data, chartType
         return (
           <ResponsiveContainer width="100%" height={400}>
             <BarChart data={transformedData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis 
                 dataKey="name" 
-                stroke="#D1D5DB" 
-                tick={{ fontSize: 12, fill: '#D1D5DB' }}
+                stroke="#64748b" 
+                tick={{ fontSize: 12, fill: '#64748b', fontFamily: 'Afacad Flux' }}
                 angle={-45}
                 textAnchor="end"
                 height={80}
               />
-              <YAxis stroke="#D1D5DB" tick={{ fontSize: 12, fill: '#D1D5DB' }} />
+              <YAxis stroke="#64748b" tick={{ fontSize: 12, fill: '#64748b', fontFamily: 'Afacad Flux' }} />
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: '#1F2937', 
+                  backgroundColor: 'white', 
                   border: 'none', 
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)',
-                  color: '#F9FAFB'
+                  borderRadius: '12px',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                  color: '#1e293b',
+                  fontFamily: 'Afacad Flux',
+                  fontWeight: '500'
                 }} 
               />
-              <Bar dataKey="value" fill="#FF6B6B" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="value" fill="#6366f1" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         );
@@ -75,26 +76,28 @@ const VisualizationPanel: React.FC<VisualizationPanelProps> = ({ data, chartType
         return (
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={transformedData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis 
                 dataKey="name" 
-                stroke="#D1D5DB" 
-                tick={{ fontSize: 12, fill: '#D1D5DB' }}
+                stroke="#64748b" 
+                tick={{ fontSize: 12, fill: '#64748b', fontFamily: 'Afacad Flux' }}
                 angle={-45}
                 textAnchor="end"
                 height={80}
               />
-              <YAxis stroke="#D1D5DB" tick={{ fontSize: 12, fill: '#D1D5DB' }} />
+              <YAxis stroke="#64748b" tick={{ fontSize: 12, fill: '#64748b', fontFamily: 'Afacad Flux' }} />
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: '#1F2937', 
+                  backgroundColor: 'white', 
                   border: 'none', 
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)',
-                  color: '#F9FAFB'
+                  borderRadius: '12px',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                  color: '#1e293b',
+                  fontFamily: 'Afacad Flux',
+                  fontWeight: '500'
                 }} 
               />
-              <Line type="monotone" dataKey="value" stroke="#4ECDC4" strokeWidth={3} dot={{ fill: '#4ECDC4', strokeWidth: 2, r: 6 }} />
+              <Line type="monotone" dataKey="value" stroke="#8b5cf6" strokeWidth={4} dot={{ fill: '#8b5cf6', strokeWidth: 3, r: 8 }} />
             </LineChart>
           </ResponsiveContainer>
         );
@@ -109,8 +112,8 @@ const VisualizationPanel: React.FC<VisualizationPanelProps> = ({ data, chartType
                 cy="50%"
                 labelLine={false}
                 label={({ name, percent, value }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
-                outerRadius={120}
-                fill="#FF6B6B"
+                outerRadius={130}
+                fill="#6366f1"
                 dataKey="value"
               >
                 {transformedData.map((entry, index) => (
@@ -119,11 +122,13 @@ const VisualizationPanel: React.FC<VisualizationPanelProps> = ({ data, chartType
               </Pie>
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: '#1F2937', 
+                  backgroundColor: 'white', 
                   border: 'none', 
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)',
-                  color: '#F9FAFB'
+                  borderRadius: '12px',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                  color: '#1e293b',
+                  fontFamily: 'Afacad Flux',
+                  fontWeight: '500'
                 }} 
               />
             </PieChart>
@@ -136,7 +141,7 @@ const VisualizationPanel: React.FC<VisualizationPanelProps> = ({ data, chartType
   };
 
   return (
-    <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
+    <div className="bg-gradient-to-br from-slate-50 to-white p-6 rounded-xl border border-slate-200 professional-shadow">
       {renderChart()}
     </div>
   );
