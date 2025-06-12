@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { DatabaseConfig } from '../pages/Index';
 import { Button } from '@/components/ui/button';
@@ -39,6 +40,13 @@ const mockChartData = [
   { name: 'Group B', value: 300 },
   { name: 'Group C', value: 200 },
   { name: 'Group D', value: 100 },
+];
+
+const mockInsights = [
+  "Database performance is optimal with 99.5% uptime",
+  "Query response time has improved by 15% this month",
+  "Most active users are accessing data between 9-11 AM",
+  "Consider indexing the 'users' table for better performance"
 ];
 
 const Dashboard: React.FC<DashboardProps> = ({ config, onDisconnect }) => {
@@ -117,7 +125,7 @@ const Dashboard: React.FC<DashboardProps> = ({ config, onDisconnect }) => {
                 <CardTitle>Insights Panel</CardTitle>
               </CardHeader>
               <CardContent>
-                <InsightsPanel />
+                <InsightsPanel insights={mockInsights} />
               </CardContent>
             </Card>
           </TabsContent>

@@ -4,7 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Database, Shield, Zap } from 'lucide-react';
+import { Database, Shield, Zap, Loader, CheckCircle, XCircle } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import { DatabaseConfig } from '../pages/Index';
 
 interface CredentialFormProps {
@@ -22,6 +23,7 @@ const CredentialForm: React.FC<CredentialFormProps> = ({ onConnectionSuccess }) 
   });
   const [isLoading, setIsLoading] = useState(false);
   const [testResult, setTestResult] = useState<'success' | 'error' | null>(null);
+  const { toast } = useToast();
 
   const handleInputChange = (field: keyof DatabaseConfig, value: string | number) => {
     setConfig(prev => ({ ...prev, [field]: value }));
@@ -47,17 +49,28 @@ const CredentialForm: React.FC<CredentialFormProps> = ({ onConnectionSuccess }) 
 
       if (response.ok) {
         setTestResult('success');
-        toast.success('Connection successful!');
+        toast({
+          title: "Success",
+          description: "Connection successful!"
+        });
         setTimeout(() => {
           onConnectionSuccess(config);
         }, 1000);
       } else {
         setTestResult('error');
-        toast.error('Connection failed. Please check your credentials.');
+        toast({
+          title: "Error",
+          description: "Connection failed. Please check your credentials.",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       setTestResult('error');
-      toast.error('Connection failed. Make sure the server is running.');
+      toast({
+        title: "Error",
+        description: "Connection failed. Make sure the server is running.",
+        variant: "destructive"
+      });
       console.error('Connection error:', error);
     } finally {
       setIsLoading(false);
